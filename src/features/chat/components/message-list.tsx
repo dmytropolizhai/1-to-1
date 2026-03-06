@@ -2,7 +2,7 @@ import { MessageItem } from "./message-item";
 import { getMessages } from "../data/messages";
 
 
-export function MessageChat() {
+export function MessageList() {
     const messages = getMessages();
 
     return (
