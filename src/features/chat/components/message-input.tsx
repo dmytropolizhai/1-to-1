@@ -11,6 +11,12 @@ export function MessageInput() {
     const [message, setMessage] = useState<string>("");
     const [isSending, setIsSending] = useState<boolean>(false);
 
+    /**
+     * Checks if the message can be sent.
+     * @returns True if the message can be sent, false otherwise.
+     */
+    const canSend = (): boolean => isSending || !message.trim();
+
     const { sendMessage } = useChat();
 
     function handleSendMessage() {
@@ -28,7 +34,7 @@ export function MessageInput() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type a message..."
             />
-            <Button onClick={handleSendMessage} className="hover:cursor-pointer" disabled={isSending || !message.trim()}>
+            <Button onClick={handleSendMessage} className="hover:cursor-pointer" disabled={canSend()}>
                 {isSending ? <Spinner /> : <SendIcon />}
             </Button>
         </div>
