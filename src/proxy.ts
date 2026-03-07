@@ -1,35 +1,38 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { prisma } from '@/shared/lib/prisma';
 
-export async function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
     const userId = request.cookies.get('user_id')?.value;
+    const { pathname } = request.nextUrl;
 
     // Paths that don't require authentication
-    if (request.nextUrl.pathname.startsWith('/(auth)') || request.nextUrl.pathname === '/') {
+    const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/new');
+    const isHomePage = pathname === '/';
+
+    if (isAuthPage || isHomePage) {
+        // If user is already logged in and tries to access login/new, redirect to chat
+        if (userId && isAuthPage) {
+            return NextResponse.redirect(new URL('/chat', request.url));
+        }
         return NextResponse.next();
     }
 
-    // Check if user is authenticated
+    // Check if user has the session cookie
     if (!userId) {
-        return NextResponse.redirect(new URL('/new', request.url));
-    }
-
-    try {
-        const user = await prisma.user.findUnique({
-            where: { id: parseInt(userId) },
-        });
-
-        if (!user) {
-            return NextResponse.redirect(new URL('/new', request.url));
-        }
-    } catch (error) {
-        console.error('Proxy auth check failed:', error);
-        return NextResponse.redirect(new URL('/new', request.url));
+        return NextResponse.redirect(new URL('/login', request.url));
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ['/chat/:path*', '/(app)/:path*'],
+    matcher: [
+        /*
+         * Match all request paths except for the ones starting with:
+         * - api (API routes)
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
+         */
+        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    ],
 };
