@@ -1,7 +1,19 @@
+import { HeroContent } from "./_components/hero/content";
+import { HeroPreview } from "./_components/hero/preview";
+
+
+
 export default function Home() {
   return (
-    <div>
-      <h1>Welcome to 1-to-1 Chat App</h1>
-    </div>
+    <main className="min-h-screen bg-background">
+      <section className="relative overflow-hidden">
+        <div className="container mx-auto px-6 py-24 md:py-32">
+          <div className="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-2">
+            <HeroContent />
+            <HeroPreview />
+          </div>
+        </div>
+      </section>
+    </main>
   );
-} 
+}
