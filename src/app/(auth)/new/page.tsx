@@ -1,6 +1,6 @@
 import { Separator } from "@/shared/components/ui/separator";
 
-import { CreateUserForm } from "./_components/forms/create-user-form";
+import { CreateUserForm } from "./_components/create-user-form";
 import { Suspense } from "react";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 
