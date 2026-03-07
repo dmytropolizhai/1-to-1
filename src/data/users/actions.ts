@@ -3,12 +3,9 @@
 import { createUserSchema, CreateUserData } from "@/data/users/schema";
 import { prisma } from "@/shared/lib/prisma";
 import { cookies } from "next/headers";
+import { ActionState } from "@/data/types";
 
-export type CreateUserState = {
-    success: boolean;
-    errors?: Partial<Record<keyof CreateUserData, string[]>>;
-    message?: string;
-};
+export type CreateUserState = ActionState<CreateUserData>;
 
 export async function createUserAction(
     _prev: CreateUserState,
@@ -69,4 +66,33 @@ export async function getMe() {
     } catch (error) {
         return null;
     }
+}
+
+export async function loginAction(
+    _prev: ActionState<{ email: string }>,
+    formData: FormData
+): Promise<ActionState<{ email: string }>> {
+    const email = formData.get("email") as string;
+
+    if (!email) {
+        return { success: false, message: "Email is required." };
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+
+    if (!user) {
+        return { success: false, message: "User not found." };
+    }
+
+    const cookieStore = await cookies();
+    cookieStore.set("user_id", user.id.toString(), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+    });
+
+    return { success: true, message: "Logged in successfully." };
 }
