@@ -96,3 +96,8 @@ export async function loginAction(
 
     return { success: true, message: "Logged in successfully." };
 }
+
+export async function logoutAction() {
+    const cookieStore = await cookies();
+    cookieStore.delete("user_id");
+}
