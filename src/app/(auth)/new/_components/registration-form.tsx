@@ -46,17 +46,17 @@ export function RegistrationForm() {
             redirect("/chat")
         }
 
-        if (!state.errors) {
+        if (state.errors) {
             toast.error(state.message ?? "Something went wrong");
-            return;
+
+            for (const [field, messages] of Object.entries(state.errors)) {
+                setError(field as keyof CreateUserData, {
+                    type: "server",
+                    message: messages?.[0],
+                });
+            }
         };
 
-        for (const [field, messages] of Object.entries(state.errors)) {
-            setError(field as keyof CreateUserData, {
-                type: "server",
-                message: messages?.[0],
-            });
-        }
     }, [state, setError]);
 
 
@@ -100,9 +100,15 @@ export function RegistrationForm() {
                 </CardContent>
 
                 <CardFooter>
-                    <Field orientation="horizontal">
+                    <div className="flex flex-col gap-4 w-full">
                         <SubmitButton />
-                    </Field>
+                        <p className="text-sm text-muted-foreground text-center">
+                            Already have an account?{" "}
+                            <a href="/login" className="text-primary hover:underline">
+                                Login
+                            </a>
+                        </p>
+                    </div>
                 </CardFooter>
             </Card>
         </Form>
