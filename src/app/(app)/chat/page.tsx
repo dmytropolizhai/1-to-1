@@ -1,5 +1,5 @@
 import { MessageInput } from "./_components/message-input";
-import { MessageList } from "./components/message-list";
+import { MessageList } from "./_components/message-list";
 
 export default function ChatPage() {
   return (
