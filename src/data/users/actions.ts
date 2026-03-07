@@ -2,6 +2,7 @@
 
 import { createUserSchema, CreateUserData } from "@/data/users/schema";
 import { prisma } from "@/shared/lib/prisma";
+import { cookies } from "next/headers";
 
 export type CreateUserState = {
     success: boolean;
@@ -42,8 +43,30 @@ export async function createUserAction(
     });
 
     if (user) {
+        const cookieStore = await cookies();
+        cookieStore.set("user_id", user.id.toString(), {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+        });
         return { success: true, message: "User created successfully." };
     }
 
     return { success: false, message: "Failed to create user." };
+}
+
+export async function getMe() {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("user_id")?.value;
+    if (!userId) return null;
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(userId) },
+        });
+        return user;
+    } catch (error) {
+        return null;
+    }
 }
