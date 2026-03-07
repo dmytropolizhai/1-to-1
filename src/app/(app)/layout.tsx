@@ -9,7 +9,5 @@ export default async function AppLayout({ children }: PropsWithChildren) {
         redirect("/new")
     }
 
-    return (
-        { children }
-    )
+    return children;
 }
