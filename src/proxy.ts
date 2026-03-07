@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-export default async function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const userId = request.cookies.get('user_id')?.value;
     const { pathname } = request.nextUrl;
 
