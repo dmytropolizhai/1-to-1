@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { GridPattern } from "@/shared/components/background";
 
 export const metadata: Metadata = {
   title: "1-to-1",
@@ -10,6 +11,7 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
   return (
     <html lang="en">
       <body className={`antialiased`}>
+        <GridPattern lineOpacity={0.5} />
         {children}
       </body>
     </html>
