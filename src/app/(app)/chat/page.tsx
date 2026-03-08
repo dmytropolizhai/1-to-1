@@ -1,13 +1,16 @@
-import { MessageInput } from "./_components/message-input";
-import { MessageList } from "./_components/message-list";
+import { getCurrentChat } from "@/data/chats/actions";
+import { ChatInput } from "./_components/chat-input";
+import { ChatMessagesView } from "./_components/chat-messages-view";
 
-export default function ChatPage() {
+export default async function ChatPage() {
+  const chat = await getCurrentChat();
+
   return (
-    <main className="flex h-screen w-full flex-col items-center justify-start gap-4 bg-background p-4">
-      <section className="flex flex-col gap-2 w-full h-full justify-between p-4">
-        <MessageList />
-        <MessageInput />
-      </section>
-    </main>
+    <div className="flex flex-col h-screen w-full overflow-hidden bg-background">
+      <div className="flex-1 overflow-hidden relative flex flex-col">
+        <ChatMessagesView />
+        {chat && <ChatInput />}
+      </div>
+    </div>
   );
-} 
+}
