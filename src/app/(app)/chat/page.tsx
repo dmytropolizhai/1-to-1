@@ -6,11 +6,11 @@ export default async function ChatPage() {
   const chat = await getCurrentChat();
 
   return (
-    <div className="flex flex-col h-screen w-full overflow-hidden bg-background">
+    <main className="flex flex-col h-screen w-full overflow-hidden bg-background">
       <div className="flex-1 overflow-hidden relative flex flex-col">
         <ChatMessagesView />
         {chat && <ChatInput />}
       </div>
-    </div>
+    </main>
   );
 }
