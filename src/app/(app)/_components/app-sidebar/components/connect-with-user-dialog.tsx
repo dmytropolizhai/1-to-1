@@ -23,7 +23,7 @@ export function ConnectWithUserDialog() {
                     <div className="space-y-2">
                         <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 ml-1">User Public ID</span>
                         <Input
-                            placeholder="e.g. 123456"
+                            placeholder="e.g. 3fe7f423-9194-4aa9-ad67-78e51eaa5edb"
                             className="h-12"
                         />
                     </div>
