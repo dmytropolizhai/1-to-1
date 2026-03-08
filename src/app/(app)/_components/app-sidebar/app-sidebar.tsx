@@ -5,7 +5,6 @@ import {
     SidebarGroup,
     SidebarGroupContent,
     SidebarMenu,
-    SidebarMenuButton,
     SidebarMenuItem,
 } from "@/shared/components/ui/sidebar"
 import { RecentChats } from "./components/recent-chats"
@@ -13,6 +12,9 @@ import { getChats } from "@/data/chats/actions"
 import { getMe } from "@/data/users/actions"
 import { ChatList } from "./components/chat-list"
 import { MyPublicId } from "./components/my-public-id"
+import { SidebarHeaderCustom } from "./components/sidebar-header-custom"
+import { SidebarSearch } from "./components/sidebar-search"
+import { SidebarUser } from "./components/sidebar-user"
 
 export async function AppSidebar() {
     const [me, chats] = await Promise.all([getMe(), getChats()])
@@ -21,25 +23,14 @@ export async function AppSidebar() {
 
     return (
         <Sidebar variant="sidebar" collapsible="icon">
-            {/* TODO: Connection status */}
-            {/* <SidebarHeader className="border-b border-sidebar-border/50 pb-4">
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" className="hover:bg-transparent">
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader> */}
-            <SidebarContent>
+            <SidebarHeaderCustom />
+
+            <SidebarContent className="gap-0">
+                <div className="mt-4">
+                    <SidebarSearch />
+                </div>
+
                 <SidebarGroup>
-                    {/* TODO: Create search */}
-                    {/* <div className="relative mb-6 mt-2 px-2 group-data-[collapsible=icon]:hidden">
-                        <Search className="absolute left-5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/70" />
-                        <input
-                            placeholder="Find a conversation..."
-                            className="w-full bg-sidebar-accent/30 border border-sidebar-border/50 rounded-full py-2 pl-9 pr-3 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
-                        />
-                    </div> */}
                     <RecentChats />
 
                     <SidebarGroupContent>
@@ -52,7 +43,10 @@ export async function AppSidebar() {
 
             <SidebarFooter className="border-t border-sidebar-border/50 p-3 bg-sidebar-accent/5">
                 <SidebarMenu>
-                    <SidebarMenuItem className="h-14 px-2 flex-row  rounded-xl transition-all">
+                    <SidebarMenuItem>
+                        <SidebarUser />
+                    </SidebarMenuItem>
+                    <SidebarMenuItem className="mt-2 h-auto px-2 flex-row rounded-xl transition-all">
                         <MyPublicId />
                     </SidebarMenuItem>
                 </SidebarMenu>
