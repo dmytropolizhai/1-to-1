@@ -1,11 +1,12 @@
 "use client"
 
 import { logoutAction } from "@/data/users/actions"
-import { Button } from "@/shared/components/ui/button"
+import { Button, ButtonProps } from "@/shared/components/ui/button"
+import { cn } from "@/shared/lib/utils"
 import { LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-export function LogoutButton() {
+export function LogoutButton({ className, ...rest }: ButtonProps) {
     const router = useRouter()
 
     async function handleLogout() {
@@ -18,7 +19,8 @@ export function LogoutButton() {
             variant="ghost"
             size="icon-xs"
             onClick={handleLogout}
-            className="ml-auto hover:text-destructive group/logout"
+            className={cn("ml-auto hover:text-destructive group/logout", className)}
+            {...rest}
         >
             <LogOut className="size-3.5 transition-colors group-hover/logout:text-destructive" />
         </Button>
