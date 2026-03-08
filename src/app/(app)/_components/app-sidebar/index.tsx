@@ -1,9 +1,4 @@
 import {
-    MoreHorizontal,
-    Settings,
-} from "lucide-react"
-
-import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
@@ -12,13 +7,11 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuAction,
 } from "@/shared/components/ui/sidebar"
 import { RecentChannels } from "./recent-channels"
 import { getChats } from "@/data/chats/actions"
 import { getMe } from "@/data/users/actions"
-import { User } from "./user"
-import { LogoutButton } from "../logout-button"
+import { ChatList } from "./chat-list"
 
 export async function AppSidebar() {
     const [me, chats] = await Promise.all([getMe(), getChats()])
@@ -50,43 +43,19 @@ export async function AppSidebar() {
 
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {chats.map((chat) => (
-                                <SidebarMenuItem key={chat.id}>
-                                    <SidebarMenuButton
-                                        tooltip={chat.name}
-                                        className="h-14 px-4 hover:bg-sidebar-accent/50 transition-all duration-200"
-                                    >
-                                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/10 to-primary/30 text-primary border border-primary/20 font-semibold text-sm">
-                                            {chat.initial}
-                                        </div>
-                                        <div className="flex flex-1 flex-col overflow-hidden text-left ml-2">
-                                            <span className="truncate font-semibold text-sm text-foreground/90">{chat.name}</span>
-                                            <span className="truncate text-xs text-muted-foreground mt-0.5">{chat.lastMessage}</span>
-                                        </div>
-                                    </SidebarMenuButton>
-                                    <SidebarMenuAction className="right-2 group-hover:opacity-100">
-                                        <MoreHorizontal className="h-4 w-4" />
-                                    </SidebarMenuAction>
-                                </SidebarMenuItem>
-                            ))}
+                            <ChatList chats={chats} />
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-sidebar-border/50 p-3 bg-sidebar-accent/5">
+            {/* <SidebarFooter className="border-t border-sidebar-border/50 p-3 bg-sidebar-accent/5">
                 <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton
-                            className="h-14 px-2 hover:bg-sidebar-accent/50 rounded-xl transition-all"
-                            size="lg"
-                        >
-                            <User />
-                            <LogoutButton />
-                        </SidebarMenuButton>
+                    <SidebarMenuItem className="h-14 px-2 flex-row  rounded-xl transition-all">
+                        <User />
                     </SidebarMenuItem>
                 </SidebarMenu>
-            </SidebarFooter>
+            </SidebarFooter> */}
         </Sidebar>
     )
 }
