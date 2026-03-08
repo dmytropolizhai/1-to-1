@@ -1,7 +1,7 @@
 import { getMe } from "@/data/users/actions";
 import { User2 } from "lucide-react";
 
-export async function User() {
+export async function SidebarUser() {
     const me = await getMe();
     return (
         <div className="flex justify-center">

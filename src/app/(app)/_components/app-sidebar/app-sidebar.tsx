@@ -8,10 +8,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/shared/components/ui/sidebar"
-import { RecentChats } from "./recent-chats"
+import { RecentChats } from "./components/recent-chats"
 import { getChats } from "@/data/chats/actions"
 import { getMe } from "@/data/users/actions"
-import { ChatList } from "./chat-list"
+import { ChatList } from "./components/chat-list"
+import { MyPublicId } from "./components/my-public-id"
 
 export async function AppSidebar() {
     const [me, chats] = await Promise.all([getMe(), getChats()])
@@ -49,13 +50,13 @@ export async function AppSidebar() {
                 </SidebarGroup>
             </SidebarContent>
 
-            {/* <SidebarFooter className="border-t border-sidebar-border/50 p-3 bg-sidebar-accent/5">
+            <SidebarFooter className="border-t border-sidebar-border/50 p-3 bg-sidebar-accent/5">
                 <SidebarMenu>
                     <SidebarMenuItem className="h-14 px-2 flex-row  rounded-xl transition-all">
-                        <User />
+                        <MyPublicId />
                     </SidebarMenuItem>
                 </SidebarMenu>
-            </SidebarFooter> */}
+            </SidebarFooter>
         </Sidebar>
     )
 }
