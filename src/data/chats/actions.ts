@@ -100,7 +100,6 @@ export async function getCurrentChat() {
     }
 }
 
-
 async function connectWithUser(publicId: string) {
     const me = await getMe();
     if (!me) throw new Error("Unauthorized");
@@ -165,5 +164,45 @@ export async function connectWithUserAction(
         return { success: true, message: "Connected successfully." };
     } catch (error: any) {
         return { success: false, message: error.message || "Failed to connect." };
+    }
+}
+
+export async function getChat(chatId: string) {
+    const me = await getMe();
+    if (!me) return null;
+
+    const chat = await prisma.chat.findUnique({
+        where: {
+            publicId: chatId
+        },
+        include: {
+            participants: {
+                include: {
+                    user: true
+                }
+            }
+        }
+    });
+
+    if (!chat) return null;
+
+    const isParticipant = chat.participants.some(p => p.userId === me.id);
+    const otherParticipant = chat.participants.find(p => p.userId !== me.id)?.user;
+
+    return {
+        ...chat,
+        isParticipant,
+        otherUser: otherParticipant,
+        getMessages: async () => {
+            if (!isParticipant) return [];
+            return await prisma.message.findMany({
+                where: {
+                    chatId: chat.id
+                },
+                orderBy: {
+                    createdAt: 'asc'
+                }
+            });
+        }
     }
 }
