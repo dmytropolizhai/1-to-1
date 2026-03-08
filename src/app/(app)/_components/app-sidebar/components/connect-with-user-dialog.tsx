@@ -32,7 +32,7 @@ export function ConnectWithUserDialog() {
                 </div>
                 <div className="flex justify-end gap-3 font-semibold">
                     <Button variant="ghost" className="rounded-xl px-6">Cancel</Button>
-                    <Button className="rounded-xl px-8 shadow-lg shadow-primary/20">Connect Now</Button>
+                    <Button className="rounded-xl px-8 shadow-lg shadow-primary/20">Send Request</Button>
                 </div>
             </DialogContent>
         </Dialog>
