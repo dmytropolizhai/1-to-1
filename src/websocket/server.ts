@@ -3,7 +3,7 @@ import { Server } from "socket.io";
 import type {
     ClientToServerEvents,
     ServerToClientEvents,
-} from "@/websocket/lib/events";
+} from "@/websocket/events";
 
 const PORT = Number(process.env.SOCKET_PORT ?? 3001);
 const httpServer = createServer();
