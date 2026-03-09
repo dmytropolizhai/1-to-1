@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getSocket } from "@/websocket"
+import { getSocket } from "@/websocket/client"
 import type { ServerToClientEvents } from "@/websocket/events"
 
 export function useSocket() {
