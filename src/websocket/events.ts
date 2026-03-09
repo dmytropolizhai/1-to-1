@@ -1,10 +1,13 @@
+import type { Message } from "@/generated/prisma/client";
+
 export interface ClientToServerEvents {
     joinChat: (chatId: string) => void;
     leaveChat: (chatId: string) => void;
-    sendMessage: (message: string) => void;
+    relayMessage: (payload: { chatId: string; message: Message }) => void;
 }
 
+
 export interface ServerToClientEvents {
-    message: (message: string) => void;
+    message: (payload: { chatId: string; message: Message }) => void;
     userCount: (count: number) => void;
 }
