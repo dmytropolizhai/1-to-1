@@ -1,42 +1,36 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getSocket } from "@/websocket/socket"
-import type {
-    ClientToServerEvents,
-    ServerToClientEvents,
-} from "@/websocket/events"
-import type { Socket } from "socket.io-client"
+import { getSocket } from "@/websocket"
+import type { ServerToClientEvents } from "@/websocket/events"
 
 export function useSocket() {
-    const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null)
-
-    const [connected, setConnected] = useState(false)
+    const socket = getSocket()
+    const [connected, setConnected] = useState(socket.connected)
 
     useEffect(() => {
-        const socketInstance = getSocket()
-
-        setSocket(socketInstance)
-
         const onConnect = () => setConnected(true)
         const onDisconnect = () => setConnected(false)
 
-        socketInstance.on("connect", onConnect)
-        socketInstance.on("disconnect", onDisconnect)
+        socket.on("connect", onConnect)
+        socket.on("disconnect", onDisconnect)
 
-        socketInstance.connect()
+        if (!socket.connected) {
+            socket.connect()
+        }
 
         return () => {
-            socketInstance.off("connect", onConnect)
-            socketInstance.off("disconnect", onDisconnect)
+            socket.off("connect", onConnect)
+            socket.off("disconnect", onDisconnect)
         }
-    }, [])
+    }, [socket])
 
     return {
         socket,
         connected,
     }
 }
+
 
 type ServerEventName = keyof ServerToClientEvents
 type EventHandler<T extends ServerEventName> = ServerToClientEvents[T]
