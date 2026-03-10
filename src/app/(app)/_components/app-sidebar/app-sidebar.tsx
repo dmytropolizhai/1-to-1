@@ -3,14 +3,12 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
-    SidebarGroupContent,
     SidebarMenu,
     SidebarMenuItem,
 } from "@/shared/components/ui/sidebar"
 import { RecentChats } from "./components/recent-chats"
 import { getChats, getCurrentChat } from "@/data/chats/actions"
 import { getMe } from "@/data/users/actions"
-import { ChatList } from "./components/chat-list"
 import { MyPublicId } from "./components/my-public-id"
 import { SidebarHeaderCustom } from "./components/sidebar-header-custom"
 import { SidebarSearch } from "./components/sidebar-search"
@@ -25,29 +23,16 @@ export async function AppSidebar() {
 
     if (!me) return null;
 
-    const chats = rawChats.map(chat => ({
-        ...chat,
-        isSelected: chat.id === currentChat?.id,
-    }))
+
 
     return (
         <Sidebar variant="sidebar" collapsible="icon">
             <SidebarHeaderCustom />
-
             <SidebarContent className="gap-0">
                 <div className="mt-4">
                     <SidebarSearch />
                 </div>
-
-                <SidebarGroup>
-                    <RecentChats />
-
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            <ChatList chats={chats} />
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+                <RecentChats />
             </SidebarContent>
 
             <SidebarFooter className="border-t border-sidebar-border/50 p-3 bg-sidebar-accent/5">
