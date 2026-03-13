@@ -1,3 +1,4 @@
+import { Chat } from "@/generated/prisma/client";
 import { z } from "zod";
 
 export const connectUserSchema = z.object({
@@ -6,9 +7,7 @@ export const connectUserSchema = z.object({
 
 export type ConnectUserData = z.infer<typeof connectUserSchema>;
 
-export interface ClientChat {
-    id: number;        // database primary key — used for everything
-    publicId: string;  // UUID for human-readable URLs
+export type ClientChat = Chat & {
     name: string;
     lastMessage: string;
     initial: string;
