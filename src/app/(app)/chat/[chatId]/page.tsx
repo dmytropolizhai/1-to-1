@@ -14,7 +14,7 @@ import { MessageList } from "./_components/message-list";
 import { auth } from "@/shared/lib/auth";
 
 interface ChatParams {
-    chatId: number;
+    chatId: string;
 }
 
 type ChatPageProps = {
@@ -23,6 +23,8 @@ type ChatPageProps = {
 
 export default async function DynamicChatPage({ params }: ChatPageProps) {
     const { chatId } = await params;
+
+    console.log(chatId);
 
     const me = await auth();
     const chatPageData = await getChatPageData(chatId);
@@ -33,7 +35,11 @@ export default async function DynamicChatPage({ params }: ChatPageProps) {
     const { isParticipant, otherUser } = chatPageData;
 
     const messages = await prisma.message.findMany({
-        where: { chatId: chatId },
+        where: {
+            chat: {
+                publicId: chatId
+            }
+        },
         orderBy: {
             createdAt: "asc"
         }

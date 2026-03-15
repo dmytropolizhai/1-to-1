@@ -1,8 +1,7 @@
-import "server-only"
 import { getChat } from "@/data/chats/actions";
 import { getMe } from "@/data/users/actions";
 
-export async function getChatPageData(chatId: number) {
+export async function getChatPageData(chatId: string) {
     const chat = await getChat(chatId);
     const me = await getMe();
 
