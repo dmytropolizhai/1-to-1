@@ -1,5 +1,6 @@
 import { HeroContent } from "./_components/hero/content";
 import { HeroPreview } from "./_components/hero/preview";
+import { LearnMoreSection } from "./_components/learn-more";
 
 
 
@@ -14,6 +15,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <LearnMoreSection />
     </main>
   );
 }
