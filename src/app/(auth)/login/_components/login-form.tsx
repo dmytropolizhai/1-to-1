@@ -118,7 +118,7 @@ export function LoginForm() {
 
         if (otpState.success) {
             toast.success(otpState.message ?? "OTP sent to your email.");
-            advanceStep();
+            nextStep();
         } else {
             if (otpState.message) toast.error(otpState.message);
 
@@ -144,7 +144,7 @@ export function LoginForm() {
         }
     }, [verifyState]);
 
-    function advanceStep() {
+    function nextStep() {
         setTransitioning(true);
         setTimeout(() => {
             setCurrentStep((s) => Math.min(s + 1, LAST_STEP));
@@ -156,7 +156,7 @@ export function LoginForm() {
         const valid = await trigger("email");
         if (!valid) return;
         setEmail(getValues("email"));
-        advanceStep();
+        nextStep();
     }
 
     const context: LoginStepContext = {
