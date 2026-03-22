@@ -14,7 +14,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { OTPVerificationInput } from "./otp-verification-input";
 import Link from "next/link";
-import { MultiStepForm, Step } from "@/shared/components/forms/multi-step-form";
+import { MultiStepForm, Step, useMultiStepForm } from "@/shared/components/forms/multi-step-form";
 
 const emailSchema = z.object({
     email: z.string().email("Invalid email"),
@@ -31,7 +31,6 @@ type LoginStepContext = {
 
 const INITIAL_OTP_STATE: ActionState<{ email: string }> = { success: false };
 const INITIAL_VERIFY_STATE: ActionState<{ email: string; otp: string }> = { success: false };
-const LAST_STEP = 1;
 
 function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel: string }) {
     const { pending } = useFormStatus();
@@ -95,9 +94,8 @@ const steps: Step<LoginStepContext>[] = [
 ];
 
 export function LoginForm() {
-    const [currentStep, setCurrentStep] = useState(0);
+    const { currentStep, transitioning, nextStep } = useMultiStepForm(steps.length);
     const [email, setEmail] = useState("");
-    const [transitioning, setTransitioning] = useState(false);
 
     const [otpState, otpFormAction] = useActionState(requestOtpAction, INITIAL_OTP_STATE);
     const [verifyState, verifyFormAction] = useActionState(verifyOtpAction, INITIAL_VERIFY_STATE);
@@ -143,14 +141,6 @@ export function LoginForm() {
             toast.error(verifyState.message);
         }
     }, [verifyState]);
-
-    function nextStep() {
-        setTransitioning(true);
-        setTimeout(() => {
-            setCurrentStep((s) => Math.min(s + 1, LAST_STEP));
-            setTransitioning(false);
-        }, 250);
-    }
 
     async function handleContinue() {
         const valid = await trigger("email");
