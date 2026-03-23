@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM_EMAIL = process.env.EMAIL_FROM ?? "support@one-to-one.polizhai.site";
 
-export async function sendOtpEmail(to: string, code: string): Promise<void> {
+export async function sendOTPEmail(to: string, code: string): Promise<void> {
     const { error } = await resend.emails.send({
         from: FROM_EMAIL,
         to,
