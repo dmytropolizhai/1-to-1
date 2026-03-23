@@ -6,7 +6,7 @@ export default async function ChatPage() {
   const chats = await getClientChats();
 
   if (chats.length > 0) {
-    redirect(`/chat/${chats[0].id}`);
+    redirect(`/chat/${chats[0].userPublicId}`);
   }
 
   return (
