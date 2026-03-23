@@ -8,7 +8,7 @@ import { useMessages } from "@/data/messages/hooks";
 type ChatMessageListProps = {
     messages: Message[];
     meId: string | number;
-    chatId: string;
+    chatId: number;
 }
 
 export function MessageList({
@@ -16,7 +16,7 @@ export function MessageList({
     meId,
     chatId
 }: ChatMessageListProps) {
-    const messages = useMessages();
+    const messages = useMessages(chatId);
     const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
