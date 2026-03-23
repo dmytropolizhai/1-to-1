@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useActionState, useState } from "react";
+import { useEffect, useActionState, useState, startTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/shared/components/ui/input";
@@ -15,6 +15,7 @@ import { z } from "zod";
 import { OTPVerificationInput } from "./otp-verification-input";
 import Link from "next/link";
 import { MultiStepForm, Step, useMultiStepForm } from "@/shared/components/forms/multi-step-form";
+import { Item, ItemTitle } from "@/shared/components/ui/item";
 
 const emailSchema = z.object({
     email: z.string().email("Invalid email"),
@@ -26,6 +27,10 @@ type LoginStepContext = {
     email: string;
     emailError?: { message?: string };
     registerEmail: ReturnType<typeof useForm<EmailData>>["register"];
+
+    resendDisabled: boolean;
+    resendOTP: () => void;
+
     onContinue: () => void;
 };
 
@@ -71,7 +76,7 @@ const steps: Step<LoginStepContext>[] = [
         },
     },
     {
-        renderFields({ email }) {
+        renderFields({ email, resendOTP, resendDisabled }) {
             return (
                 <>
                     <input type="hidden" name="email" value={email} readOnly />
@@ -82,6 +87,12 @@ const steps: Step<LoginStepContext>[] = [
                         </FieldDescription>
                         <OTPVerificationInput />
                     </Field>
+                    <div className="flex flex-row items-center gap-2">
+                        <p className="text-muted-foreground">Didn't receive a code?</p>
+                        <Button type="button" variant="link" className="h-auto p-0" onClick={() => resendOTP()} disabled={resendDisabled}>
+                            Resend code
+                        </Button>
+                    </div>
                 </>
             );
         },
@@ -96,6 +107,7 @@ const steps: Step<LoginStepContext>[] = [
 export function LoginForm() {
     const { currentStep, transitioning, nextStep } = useMultiStepForm(steps.length);
     const [email, setEmail] = useState("");
+    const [resendDisabled, setResendDisabled] = useState<boolean>(false);
 
     const [otpState, otpFormAction] = useActionState(requestOtpAction, INITIAL_OTP_STATE);
     const [verifyState, verifyFormAction] = useActionState(verifyOtpAction, INITIAL_VERIFY_STATE);
@@ -116,7 +128,9 @@ export function LoginForm() {
 
         if (otpState.success) {
             toast.success(otpState.message ?? "OTP sent to your email.");
-            nextStep();
+            if (currentStep === 0) {
+                nextStep();
+            }
         } else {
             if (otpState.message) toast.error(otpState.message);
 
@@ -129,7 +143,7 @@ export function LoginForm() {
                 }
             }
         }
-    }, [otpState]);
+    }, [otpState, setError, nextStep]);
 
     useEffect(() => {
         if (verifyState.success) {
@@ -146,14 +160,22 @@ export function LoginForm() {
         const valid = await trigger("email");
         if (!valid) return;
         setEmail(getValues("email"));
-        nextStep();
     }
 
     const context: LoginStepContext = {
         email,
         emailError: errors.email,
         registerEmail: register,
+        resendDisabled: resendDisabled,
         onContinue: handleContinue,
+        resendOTP: () => {
+            const formData = new FormData();
+            formData.append("email", email);
+            startTransition(() => {
+                otpFormAction(formData);
+            });
+            setResendDisabled(true);
+        },
     };
 
     return (
