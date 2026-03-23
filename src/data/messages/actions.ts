@@ -1,4 +1,4 @@
-import "server-only";
+"use server";
 
 import { prisma } from "@/shared/lib/prisma";
 import { getMe } from "@/data/users/actions";
