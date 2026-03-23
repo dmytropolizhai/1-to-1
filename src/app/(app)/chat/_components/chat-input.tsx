@@ -8,15 +8,14 @@ import { Spinner } from "@/shared/components/ui/spinner";
 import { sendMessage } from "@/data/messages/actions";
 import { cn } from "@/shared/lib/utils";
 
-import { useParams } from "next/navigation";
 import { useSocket } from "@/websocket/hooks/use-socket";
+import { useMessageStore } from "@/data/messages/hooks";
 
-
-export function ChatInput() {
-    const { chatId } = useParams() as { chatId: string };
+export function ChatInput({ chatId }: { chatId: number }) {
     const [message, setMessage] = useState("");
     const [isPending, startTransition] = useTransition();
     const { socket } = useSocket();
+    const addMessage = useMessageStore(state => state.addMessage);
 
     const isSubmitDisabled = isPending || !message.trim();
 
@@ -26,12 +25,15 @@ export function ChatInput() {
 
         startTransition(async () => {
             const response = await sendMessage(value, chatId);
-            
-            if (response.success && response.message && socket) {
-                socket.emit("relayMessage", {
-                    chatId,
-                    message: response.message
-                });
+
+            if (response.success && response.message) {
+                addMessage(chatId, response.message);
+                if (socket) {
+                    socket.emit("relayMessage", {
+                        chatId,
+                        message: response.message
+                    });
+                }
                 setMessage("");
             }
         });
