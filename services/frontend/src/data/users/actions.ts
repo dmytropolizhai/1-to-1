@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { ActionState } from "@/data/types";
 import { generateOTP, hashOtp } from "@/shared/lib/otp";
 import { sendOTPEmail } from "@/shared/lib/email";
+import { redis } from "@/shared/lib/redis";
 
 export type CreateUserState = ActionState<CreateUserData>;
 
@@ -64,10 +65,18 @@ export async function getMe() {
     const userId = cookieStore.get("user_id")?.value;
     if (!userId) return null;
 
+    const cacheKey = `user:${userId}`;
     try {
+        const cached = await redis.get(cacheKey);
+        if (cached) return JSON.parse(cached);
+
         const user = await prisma.user.findUnique({
             where: { id: parseInt(userId) },
         });
+
+        if (user) {
+            await redis.set(cacheKey, JSON.stringify(user), { EX: 3600 });
+        }
         return user;
     } catch (error) {
         return null;
@@ -95,12 +104,10 @@ export async function requestOtpAction(
 
     const code = generateOTP();
     const codeHash = hashOtp(email, code);
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    await prisma.otpToken.upsert({
-        where: { email },
-        update: { codeHash, expiresAt },
-        create: { email, codeHash, expiresAt },
+    
+    // Store in Redis with 10-minute expiration
+    await redis.set(`otp:${email}`, codeHash, {
+        EX: 10 * 60,
     });
 
     try {
@@ -124,24 +131,19 @@ export async function verifyOtpAction(
         return { success: false, message: "Email and OTP are required." };
     }
 
-    const token = await prisma.otpToken.findUnique({ where: { email } });
+    const storedHash = await redis.get(`otp:${email}`);
 
-    if (!token) {
-        return { success: false, message: "No OTP was requested for this email." };
-    }
-
-    if (token.expiresAt < new Date()) {
-        await prisma.otpToken.delete({ where: { email } });
-        return { success: false, message: "OTP has expired. Please request a new one." };
+    if (!storedHash) {
+        return { success: false, message: "No OTP was requested, or it has expired." };
     }
 
     const submittedHash = hashOtp(email, otp);
-    if (submittedHash !== token.codeHash) {
+    if (submittedHash !== storedHash) {
         return { success: false, message: "Invalid OTP. Please try again." };
     }
 
     // OTP is valid — consume it and create the session
-    await prisma.otpToken.delete({ where: { email } });
+    await redis.del(`otp:${email}`);
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
@@ -161,5 +163,10 @@ export async function verifyOtpAction(
 
 export async function logoutAction() {
     const cookieStore = await cookies();
+    const userId = cookieStore.get("user_id")?.value;
+    if (userId) {
+        await redis.del(`user:${userId}`);
+    }
     cookieStore.delete("user_id");
 }
+
