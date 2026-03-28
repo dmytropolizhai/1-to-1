@@ -16,7 +16,7 @@ const words = [
 
 export function HeroSection() {
     return (
-        <section className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden">
+        <section className="relative flex min-h-150 w-full flex-col items-center justify-center overflow-hidden">
             <div className="z-10 flex flex-col items-center text-center px-4">
                 <TypingAnimation
                     words={words}
